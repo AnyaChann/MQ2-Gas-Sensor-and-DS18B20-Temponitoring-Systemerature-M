@@ -33,7 +33,7 @@ Hệ thống giám sát khí gas và nhiệt độ sử dụng Arduino Uno với
 | **D0** | MQ-2 (Digital) | Tín hiệu digital khí gas |
 | **D3** | LED Alarm | Đèn LED cảnh báo (đỏ) |
 | **D5** | Speaker/Buzzer | Loa cảnh báo |
-| **D6** | Push Button | Nút chuyển đổi mode |
+| **D7** | Push Button | Nút chuyển đổi mode |
 | **D9** | LED Mode 1 | LED báo TEST mode (đỏ) |
 | **D10** | LED Mode 2 | LED báo NORMAL mode (vàng) |
 | **D11** | LED Mode 3 | LED báo HIGH mode (xanh) |
