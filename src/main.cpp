@@ -7,6 +7,7 @@
 #define TEMP_SENSOR_PIN A1      // Chân A1: Cảm biến nhiệt độ DS18B20
 #define MQ2_DIGITAL_PIN 0       // Chân D0: Tín hiệu digital từ MQ-2
 #define SPEAKER_PIN 5           // Chân D5: Loa cảnh báo
+#define PUMP_RELAY_PIN 6        // Chân D6: Relay điều khiển bơm
 #define LED_PIN 3               // Chân D3: Đèn LED khẩn cấp
 #define BUTTON_PIN 7            // Chân D7: Button để đổi threshold
 #define LED_MODE1 9             // Chân D9: LED báo Mode 1 (Test)
@@ -67,12 +68,14 @@ void setup() {
   pinMode(TEMP_SENSOR_PIN, INPUT);    // A1 là input (DS18B20)
   pinMode(MQ2_DIGITAL_PIN, INPUT);    // D0 là input (MQ-2 digital)
   pinMode(SPEAKER_PIN, OUTPUT);       // D5 là output cho loa
+  pinMode(PUMP_RELAY_PIN, OUTPUT);    // D6 là output cho relay bơm
   pinMode(LED_PIN, OUTPUT);           // D3 là output cho đèn LED
   pinMode(BUTTON_PIN, INPUT_PULLUP);  // D7 là input với pull-up resistor
   pinMode(LED_MODE1, OUTPUT);         // D9 là output cho LED mode 1
   pinMode(LED_MODE2, OUTPUT);         // D10 là output cho LED mode 2
   pinMode(LED_MODE3, OUTPUT);         // D11 là output cho LED mode 3
   analogWrite(SPEAKER_PIN, 0);        // Tắt loa ban đầu
+  digitalWrite(PUMP_RELAY_PIN, HIGH);  // Tắt bơm ban đầu (relay OFF)
   digitalWrite(LED_PIN, LOW);         // Tắt đèn ban đầu
   
   // Khởi tạo cảm biến nhiệt độ DS18B20
@@ -121,7 +124,8 @@ void loop() {
   Serial.print(sensorDigitalValue);
   Serial.print("  |  Temperature (A1): ");
   Serial.print(currentTemp);
-  Serial.println("C");
+  Serial.print("C  |  Pump: ");
+  Serial.println(digitalRead(PUMP_RELAY_PIN) ? "ON" : "OFF");
   
   // Kiểm tra điều kiện cảnh báo
   smokeDetected = (sensorAnalogValue > currentSmokeThreshold);
@@ -142,14 +146,18 @@ void loop() {
       Serial.println("WARNING - TOXIC GAS DETECTED!");
     }
     
-    // Kích hoạt speaker và LED với hiệu ứng beep/blink
+    Serial.println("*** PUMP ACTIVATED - FIRE SUPPRESSION ***");
+    
+    // Kích hoạt speaker, LED và bơm
     triggerAlarmBeep();
     triggerLedBlink();
+    digitalWrite(PUMP_RELAY_PIN, LOW);  // Bật bơm khi có cảnh báo
     
   } else {
-    // Tắt speaker và LED khi an toàn
+    // Tắt speaker, LED và bơm khi an toàn
     analogWrite(SPEAKER_PIN, 0);
     digitalWrite(LED_PIN, LOW);
+    digitalWrite(PUMP_RELAY_PIN, HIGH);   // Tắt bơm khi an toàn
     isBeeping = false;
     isLedOn = false;
   }

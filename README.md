@@ -19,6 +19,7 @@ Hệ thống giám sát khí gas và nhiệt độ sử dụng Arduino Uno với
 
 - **Speaker/Buzzer**: Cảnh báo âm thanh
 - **4x LED**: 1 LED cảnh báo + 3 LED báo mode
+- **Relay Module**: Điều khiển bơm chữa cháy
 
 ### Thiết bị nhập
 
@@ -33,6 +34,7 @@ Hệ thống giám sát khí gas và nhiệt độ sử dụng Arduino Uno với
 | **D0** | MQ-2 (Digital) | Tín hiệu digital khí gas |
 | **D3** | LED Alarm | Đèn LED cảnh báo (đỏ) |
 | **D5** | Speaker/Buzzer | Loa cảnh báo |
+| **D6** | Relay Module | Điều khiển bơm chữa cháy |
 | **D7** | Push Button | Nút chuyển đổi mode |
 | **D9** | LED Mode 1 | LED báo TEST mode (đỏ) |
 | **D10** | LED Mode 2 | LED báo NORMAL mode (vàng) |
@@ -58,6 +60,18 @@ Pin 2 --> GND
 (Sử dụng INPUT_PULLUP - không cần điện trở ngoài)
 ```
 
+### Kết nối Relay Module
+
+```
+Relay Module    Arduino    Bơm nước
+VCC        -->  5V
+GND        -->  GND
+IN         -->  D6
+COM        -->  Nguồn bơm (+)
+NO         -->  Bơm (+)
+NC         -->  (không dùng)
+```
+
 ## ⚙️ Chế độ hoạt động
 
 Hệ thống có 3 chế độ hoạt động với **dual-threshold** (ngưỡng kép) cho cả khói và nhiệt độ:
@@ -74,10 +88,17 @@ Hệ thống có 3 chế độ hoạt động với **dual-threshold** (ngưỡn
 - **Tự động điều chỉnh** cả 2 threshold khi chuyển mode
 - **Linh hoạt** cho các môi trường khác nhau (nhà bếp, kho hàng, phòng máy...)
 
+### 💧 Hệ thống chữa cháy tự động
+
+- **Relay D6**: Điều khiển bơm nước/chất chữa cháy
+- **Tự động kích hoạt**: Bơm bật ngay khi phát hiện cảnh báo
+- **An toàn**: Bơm tắt tự động khi hết nguy hiểm
+- **Tương thích**: Có thể kết nối với bơm 12V, 24V hoặc 220V qua relay
+
 ### Chuyển đổi mode
 
 - Nhấn nút tại **D7** để chuyển đổi: TEST → NORMAL → HIGH → TEST...
-- LED tương ứng sẽ sáng để báo mode hiện tại
+- LED tương ứng sẽ sáng để báo mode hiện tại  
 - LED cảnh báo (D3) nháy 1 lần khi đổi mode
 - Mỗi mode có threshold riêng cho cả khói và nhiệt độ
 
@@ -93,14 +114,15 @@ Hệ thống sẽ kích hoạt cảnh báo khi:
 
 - 🔔 **Speaker**: Phát tiếng bíp liên tục (bật/tắt mỗi 100ms)
 - 💡 **LED Alarm**: Nháy liên tục (bật/tắt mỗi 100ms)
-- 📱 **Serial Monitor**: Hiển thị thông báo cảnh báo chi tiết
+- � **Pump**: Tự động bật bơm chữa cháy qua relay
+- �📱 **Serial Monitor**: Hiển thị thông báo cảnh báo chi tiết
 
 ## 📊 Dữ liệu Serial Monitor
 
 ### Định dạng output
 
 ```
-Analog Value (A0): 156  |  Digital Value (D0): 1  |  Temperature (A1): 24.5C
+Analog Value (A0): 156  |  Digital Value (D0): 1  |  Temperature (A1): 24.5C  |  Pump: OFF
 Current Mode: NORMAL (Smoke: 300, Temp: 50.0C)
 ```
 
@@ -108,8 +130,9 @@ Current Mode: NORMAL (Smoke: 300, Temp: 50.0C)
 
 ```
 FIRE ALARM - SMOKE DETECTED: Level = 450
-TEMPERATURE ALARM - HIGH TEMP: 100.0 C
+TEMPERATURE ALARM - HIGH TEMP: 51.2 C
 WARNING - TOXIC GAS DETECTED!
+*** PUMP ACTIVATED - FIRE SUPPRESSION ***
 ```
 
 ### Thông báo đổi mode
@@ -141,7 +164,7 @@ Mode Changed to: HIGH (Smoke: 600, Temp: 100.0C)
 #define LED_BLINK_DURATION 100       // Thời gian nháy LED (ms)
 
 // Threshold arrays cho 3 mode
-int smokeThresholds[] = {50, 300, 600};      // Test, Normal, High
+int smokeThresholds[] = {50, 300, 600};        // Test, Normal, High
 float tempThresholds[] = {10.0, 50.0, 100.0}; // Test, Normal, High (°C)
 ```
 
@@ -192,6 +215,13 @@ float tempThresholds[] = {10.0, 50.0, 100.0}; // Test, Normal, High (°C)
 - Kiểm tra kết nối D7 và GND
 - Đảm bảo sử dụng INPUT_PULLUP
 - Tăng `debounceDelay` nếu button nhạy quá
+
+### Bơm không hoạt động
+
+- Kiểm tra kết nối relay module D6
+- Đảm bảo relay có nguồn 5V
+- Kiểm tra kết nối COM và NO của relay
+- Đảm bảo bơm có nguồn riêng phù hợp
 
 ### MQ-2 không chính xác
 
