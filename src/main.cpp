@@ -8,7 +8,7 @@
 #define MQ2_DIGITAL_PIN 0       // Chân D0: Tín hiệu digital từ MQ-2
 #define SPEAKER_PIN 5           // Chân D5: Loa cảnh báo
 #define LED_PIN 3               // Chân D3: Đèn LED khẩn cấp
-#define BUTTON_PIN 6            // Chân D7: Button để đổi threshold
+#define BUTTON_PIN 7            // Chân D7: Button để đổi threshold
 #define LED_MODE1 9             // Chân D9: LED báo Mode 1 (Test)
 #define LED_MODE2 10            // Chân D10: LED báo Mode 2 (Normal)
 #define LED_MODE3 11            // Chân D11: LED báo Mode 3 (High)
@@ -19,13 +19,13 @@
 #define BEEP_INTERVAL 100        // Khoảng cách giữa các bíp (ms)
 #define LED_BLINK_DURATION 100  // Thời gian sáng của đèn (ms)
 #define LED_BLINK_INTERVAL 100  // Khoảng cách giữa các nháy (ms)
-#define HIGH_TEMP_THRESHOLD 100.0 // Ngưỡng nhiệt độ cao (°C)
-
-// 3 mode threshold smoke
-int smokeThresholds[] = {50, 300, 600};  // Test, Normal, High
+// 3 mode threshold cho smoke và temperature
+int smokeThresholds[] = {50, 300, 600};     // Test, Normal, High
+float tempThresholds[] = {10.0, 50.0, 100.0}; // Test, Normal, High (°C)
 String modeNames[] = {"TEST", "NORMAL", "HIGH"};
-int currentThresholdIndex = 1;  // Bắt đầu với Normal mode (300)
+int currentThresholdIndex = 1;  // Bắt đầu với Normal mode
 int currentSmokeThreshold = smokeThresholds[currentThresholdIndex];
+float currentTempThreshold = tempThresholds[currentThresholdIndex];
 
 // Biến để lưu trữ dữ liệu sensor
 int sensorAnalogValue = 0;
@@ -85,9 +85,11 @@ void setup() {
   Serial.println("System is ready!");
   Serial.print("Current Mode: ");
   Serial.print(modeNames[currentThresholdIndex]);
-  Serial.print(" (Threshold: ");
+  Serial.print(" (Smoke: ");
   Serial.print(currentSmokeThreshold);
-  Serial.println(")");
+  Serial.print(", Temp: ");
+  Serial.print(currentTempThreshold);
+  Serial.println("C)");
   
   // Hiển thị LED mode ban đầu
   updateModeLEDs();
@@ -123,7 +125,7 @@ void loop() {
   
   // Kiểm tra điều kiện cảnh báo
   smokeDetected = (sensorAnalogValue > currentSmokeThreshold);
-  highTempDetected = (currentTemp > HIGH_TEMP_THRESHOLD);
+  highTempDetected = (currentTemp > currentTempThreshold);
   
   // Kích hoạt cảnh báo nếu có khói hoặc nhiệt độ cao
   if (smokeDetected || highTempDetected || sensorDigitalValue == LOW) {
@@ -211,6 +213,7 @@ void handleButton() {
         // Change to next mode (3 modes only)
         currentThresholdIndex = (currentThresholdIndex + 1) % 3;
         currentSmokeThreshold = smokeThresholds[currentThresholdIndex];
+        currentTempThreshold = tempThresholds[currentThresholdIndex];
         
         // Update mode LEDs
         updateModeLEDs();
@@ -218,9 +221,11 @@ void handleButton() {
         // Print new mode
         Serial.print("Mode Changed to: ");
         Serial.print(modeNames[currentThresholdIndex]);
-        Serial.print(" (Threshold: ");
+        Serial.print(" (Smoke: ");
         Serial.print(currentSmokeThreshold);
-        Serial.println(")");
+        Serial.print(", Temp: ");
+        Serial.print(currentTempThreshold);
+        Serial.println("C)");
         
         // Blink alarm LED to indicate change
         digitalWrite(LED_PIN, HIGH);

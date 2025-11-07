@@ -60,26 +60,33 @@ Pin 2 --> GND
 
 ## ⚙️ Chế độ hoạt động
 
-Hệ thống có 3 chế độ hoạt động được điều khiển bằng nút bấm:
+Hệ thống có 3 chế độ hoạt động với **dual-threshold** (ngưỡng kép) cho cả khói và nhiệt độ:
 
-| Mode | LED | Threshold Khói | Mô tả |
-|------|-----|----------------|-------|
-| **TEST** | D9 (Đỏ) | 50 | Chế độ kiểm tra, dễ kích hoạt |
-| **NORMAL** | D10 (Vàng) | 300 | Chế độ bình thường |
-| **HIGH** | D11 (Xanh) | 600 | Chế độ nghiêm ngặt, khó kích hoạt |
+| Mode | LED | Threshold Khói | Threshold Nhiệt độ | Mô tả |
+|------|-----|----------------|---------------------|-------|
+| **TEST** | D9 (Đỏ) | 50 | 10°C | Chế độ kiểm tra, dễ kích hoạt |
+| **NORMAL** | D10 (Vàng) | 300 | 50°C | Chế độ bình thường |
+| **HIGH** | D11 (Xanh) | 600 | 100°C | Chế độ nghiêm ngặt, khó kích hoạt |
+
+### 🎯 Tính năng Dual-Threshold
+
+- **Mỗi mode** có 2 threshold riêng biệt: **khói** và **nhiệt độ**
+- **Tự động điều chỉnh** cả 2 threshold khi chuyển mode
+- **Linh hoạt** cho các môi trường khác nhau (nhà bếp, kho hàng, phòng máy...)
 
 ### Chuyển đổi mode
 
 - Nhấn nút tại **D6** để chuyển đổi: TEST → NORMAL → HIGH → TEST...
 - LED tương ứng sẽ sáng để báo mode hiện tại
 - LED cảnh báo (D3) nháy 1 lần khi đổi mode
+- Mỗi mode có threshold riêng cho cả khói và nhiệt độ
 
 ## 🚨 Điều kiện cảnh báo
 
 Hệ thống sẽ kích hoạt cảnh báo khi:
 
-1. **Phát hiện khói**: Giá trị analog MQ-2 > threshold theo mode
-2. **Nhiệt độ cao**: DS18B20 > 100°C
+1. **Phát hiện khói**: Giá trị analog MQ-2 > threshold khói theo mode
+2. **Nhiệt độ cao**: DS18B20 > threshold nhiệt độ theo mode
 3. **Khí độc**: Tín hiệu digital MQ-2 = LOW
 
 ### Hiệu ứng cảnh báo
@@ -94,7 +101,7 @@ Hệ thống sẽ kích hoạt cảnh báo khi:
 
 ```
 Analog Value (A0): 156  |  Digital Value (D0): 1  |  Temperature (A1): 24.5C
-Current Mode: NORMAL (Threshold: 300)
+Current Mode: NORMAL (Smoke: 300, Temp: 50.0C)
 ```
 
 ### Thông báo cảnh báo
@@ -108,7 +115,7 @@ WARNING - TOXIC GAS DETECTED!
 ### Thông báo đổi mode
 
 ```
-Mode Changed to: HIGH (Threshold: 600)
+Mode Changed to: HIGH (Smoke: 600, Temp: 100.0C)
 ```
 
 ## 💻 Cấu hình phần mềm
@@ -129,10 +136,13 @@ Mode Changed to: HIGH (Threshold: 600)
 ### Tham số có thể điều chỉnh
 
 ```cpp
-#define SPEAKER_VOLUME 100        // Âm lượng loa (0-255)
-#define HIGH_TEMP_THRESHOLD 100  // Ngưỡng nhiệt độ cao (°C)
-#define BEEP_DURATION 100         // Thời gian bíp (ms)
-#define LED_BLINK_DURATION 100    // Thời gian nháy LED (ms)
+#define SPEAKER_VOLUME 100           // Âm lượng loa (0-255)
+#define BEEP_DURATION 100            // Thời gian bíp (ms)
+#define LED_BLINK_DURATION 100       // Thời gian nháy LED (ms)
+
+// Threshold arrays cho 3 mode
+int smokeThresholds[] = {50, 300, 600};      // Test, Normal, High
+float tempThresholds[] = {10.0, 50.0, 100.0}; // Test, Normal, High (°C)
 ```
 
 ## 🚀 Hướng dẫn sử dụng
