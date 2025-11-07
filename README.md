@@ -53,7 +53,7 @@ Data  -->  A1 (với điện trở pull-up 4.7kΩ)
 
 ```
 Button    Arduino
-Pin 1 --> D6
+Pin 1 --> D7
 Pin 2 --> GND
 (Sử dụng INPUT_PULLUP - không cần điện trở ngoài)
 ```
@@ -76,7 +76,7 @@ Hệ thống có 3 chế độ hoạt động với **dual-threshold** (ngưỡn
 
 ### Chuyển đổi mode
 
-- Nhấn nút tại **D6** để chuyển đổi: TEST → NORMAL → HIGH → TEST...
+- Nhấn nút tại **D7** để chuyển đổi: TEST → NORMAL → HIGH → TEST...
 - LED tương ứng sẽ sáng để báo mode hiện tại
 - LED cảnh báo (D3) nháy 1 lần khi đổi mode
 - Mỗi mode có threshold riêng cho cả khói và nhiệt độ
@@ -164,7 +164,7 @@ float tempThresholds[] = {10.0, 50.0, 100.0}; // Test, Normal, High (°C)
 
 1. Mở **Serial Monitor** với baud rate **115200**
 2. Quan sát dữ liệu cảm biến
-3. Nhấn nút D6 để thay đổi mode
+3. Nhấn nút D7 để thay đổi mode
 4. Test cảnh báo bằng cách tạo khói hoặc tăng nhiệt độ
 
 ### 4. Kiểm tra hoạt động
@@ -179,7 +179,7 @@ float tempThresholds[] = {10.0, 50.0, 100.0}; // Test, Normal, High (°C)
 
 - Kiểm tra kết nối D5
 - Tăng `SPEAKER_VOLUME` lên 200-255
-- Thử chuyển sang chân PWM khác (D3, D6, D9, D10, D11)
+- Thử chuyển sang chân PWM khác (D3, D7, D9, D10, D11)
 
 ### Nhiệt độ hiển thị -127°C
 
@@ -189,7 +189,7 @@ float tempThresholds[] = {10.0, 50.0, 100.0}; // Test, Normal, High (°C)
 
 ### Button không hoạt động
 
-- Kiểm tra kết nối D6 và GND
+- Kiểm tra kết nối D7 và GND
 - Đảm bảo sử dụng INPUT_PULLUP
 - Tăng `debounceDelay` nếu button nhạy quá
 
