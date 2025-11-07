@@ -19,7 +19,7 @@
 #define BEEP_INTERVAL 100        // Khoảng cách giữa các bíp (ms)
 #define LED_BLINK_DURATION 100  // Thời gian sáng của đèn (ms)
 #define LED_BLINK_INTERVAL 100  // Khoảng cách giữa các nháy (ms)
-#define HIGH_TEMP_THRESHOLD 35.0 // Ngưỡng nhiệt độ cao (°C)
+#define HIGH_TEMP_THRESHOLD 100.0 // Ngưỡng nhiệt độ cao (°C)
 
 // 3 mode threshold smoke
 int smokeThresholds[] = {50, 300, 600};  // Test, Normal, High

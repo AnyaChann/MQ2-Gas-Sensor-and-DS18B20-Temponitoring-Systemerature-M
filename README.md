@@ -79,7 +79,7 @@ Hệ thống có 3 chế độ hoạt động được điều khiển bằng n�
 Hệ thống sẽ kích hoạt cảnh báo khi:
 
 1. **Phát hiện khói**: Giá trị analog MQ-2 > threshold theo mode
-2. **Nhiệt độ cao**: DS18B20 > 35°C
+2. **Nhiệt độ cao**: DS18B20 > 100°C
 3. **Khí độc**: Tín hiệu digital MQ-2 = LOW
 
 ### Hiệu ứng cảnh báo
@@ -101,7 +101,7 @@ Current Mode: NORMAL (Threshold: 300)
 
 ```
 FIRE ALARM - SMOKE DETECTED: Level = 450
-TEMPERATURE ALARM - HIGH TEMP: 36.2 C
+TEMPERATURE ALARM - HIGH TEMP: 100.0 C
 WARNING - TOXIC GAS DETECTED!
 ```
 
@@ -130,7 +130,7 @@ Mode Changed to: HIGH (Threshold: 600)
 
 ```cpp
 #define SPEAKER_VOLUME 100        // Âm lượng loa (0-255)
-#define HIGH_TEMP_THRESHOLD 35.0  // Ngưỡng nhiệt độ cao (°C)
+#define HIGH_TEMP_THRESHOLD 100  // Ngưỡng nhiệt độ cao (°C)
 #define BEEP_DURATION 100         // Thời gian bíp (ms)
 #define LED_BLINK_DURATION 100    // Thời gian nháy LED (ms)
 ```
@@ -205,10 +205,6 @@ Mode Changed to: HIGH (Threshold: 600)
 - Lưu cấu hình vào EEPROM
 - Thêm chế độ tiết kiệm năng lượng
 - Cải thiện thuật toán lọc nhiễu
-
-## 📄 License
-
-Dự án này được phát hành dưới giấy phép MIT. Xem file `LICENSE` để biết thêm chi tiết.
 
 ## 🙏 Cảm ơn
 
